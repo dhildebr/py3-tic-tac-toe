@@ -1,3 +1,4 @@
+prompt = ">> "
 accepted_responses_yes = ("y", "yes", "yea")
 accepted_responses_no = ("n", "no", "nay")
 
@@ -18,10 +19,51 @@ board_aliases_bottom_left   = ("bottom-left",                    "bottom left", 
 board_aliases_bottom_center = ("bottom-center", "bottom-centre", "bottom center", "bottom centre", "bottom", "8")
 board_aliases_bottom_right  = ("bottom-right",                   "bottom right",                   "br",     "9")
 board_state = {
-  "top-left"    = " ", "top-center"    = " ", "top-right"    = " ",
-  "center-left" = " ", "center-center" = " ", "center-right" = " ",
-  "bottom-left" = " ", "bottom-center" = " ", "bottom-right" = " "
+  "top-left":     " ", "top-center":     " ", "top-right":     " ",
+  "center-left":  " ", "center-center":  " ", "center-right":  " ",
+  "bottom-left":  " ", "bottom-center":  " ", "bottom-right":  " "
 }
 
-if __name__ == "main":
-  pass
+def parse_yes_no():
+  yn_response = input(prompt).lower().strip()
+  if yn_response in accepted_responses_yes:
+    return "y"
+  elif yn_response in accepted_responses_no:
+    return "n"
+  else:
+    return None
+
+def choose_player_names():
+  global player_name_x, player_name_o
+  
+  print("Let's start with player one: you'll be using the 'X' piece. What is your name?")
+  
+  while len(player_name_x) <= 0:
+    name_input = input(prompt).strip()
+    while len(name_input) <= 0:
+      name_input = input(prompt).strip()
+    
+    print("You've chosen the name {}. Is this correct? Y/n".format(name_input))
+    if parse_yes_no() == "y":
+      player_name_x = name_input
+    else:
+      print("Please re-type your name.")
+  
+  print("Next, player two: you'll be using the 'O' piece. What is your name?")
+  
+  while len(player_name_o) <= 0:
+    name_input = input(prompt).strip()
+    while len(name_input) <= 0:
+      name_input = input(prompt).strip()
+    
+    print("You've chosen the name {}. Is this correct? Y/n".format(name_input))
+    if parse_yes_no() == "y":
+      player_name_o = name_input
+    else:
+      print("Please re-type your name.")
+
+if __name__ == "__main__":
+  print("Welcome message placeholder.")
+  choose_player_names()
+  print("{} plays the 'X' piece, {} plays the 'O' piece.".format(
+      player_name_x, player_name_o))
