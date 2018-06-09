@@ -49,13 +49,13 @@ board_state = {
 
 
 def parse_yes_no():
-  '''
+  """
   Requests one line of input and returns the string "y" if it qualifies
   as a yes-response, "n" if it qualifies as a no-response, and None
   otherwise. Responses are compared in a caps-insensitive manner against
   the lists of accepted forms defined as accepted_responses_yes
   and accepted_responses_no.
-  '''
+  """
   
   global stdprompt
   
@@ -69,12 +69,12 @@ def parse_yes_no():
 
 
 def choose_player_names():
-  '''
+  """
   Prompts the players to input their names, starting with the player
   who plays the 'X' piece. Empty strings are quietly ignored, and input
   re-requested until a non-empty string is given. Players are also asked
   to confirms their name before proceeding.
-  '''
+  """
   
   global player_name_x, player_name_o
   
@@ -106,11 +106,60 @@ def choose_player_names():
 
 
 def print_board():
+  """
+  Prints the current state of the game board. Player pieces are
+  represented as capital letters 'X' or 'O', and empty spots instead
+  have a space character in the spot.
+  """
+  
   print(board_layout_format_string.format(
       tl = board_state["top-left"],    tc = board_state["top-center"],    tr = board_state["top-right"],
       cl = board_state["center-left"], cc = board_state["center-center"], cr = board_state["center-right"],
       bl = board_state["bottom-left"], bc = board_state["bottom-center"], br = board_state["bottom-right"]
   ))
+
+
+def advance_turn():
+  """
+  Checks whether either player has won: if so, returns a string of the
+  lowercase letter 'x' or 'o' to indicate the victor, otherwise returns
+  None. If no victor is yet declared, toggles the turn to the
+  other player.
+  """
+  
+  # Horizontal victory
+  if (    board_state["top-left"]   == board_state["top-center"]
+      and board_state["top-center"] == board_state["top-right"]):
+    return board_state["top-left"].lower()
+  elif (  board_state["center-left"]   == board_state["center-center"]
+      and board_state["center-center"] == board_state["center-right"]):
+    return board_state["center-left"].lower()
+  elif (  board_state["bottom-left"]   == board_state["bottom-center"]
+      and board_state["bottom-center"] == board_state["bottom-right"]):
+    return board_state["bottom-left"].lower()
+  
+  # Vertical victory
+  elif (  board_state["top-left"]    == board_state["center-left"]
+      and board_state["center-left"] == board_state["bottom-left"]):
+    return board_state["top-left"].lower()
+  elif (  board_state["top-center"]    == board_state["center-center"]
+      and board_state["center-center"] == board_state["bottom-center"]):
+    return board_state["top-center"].lower()
+  elif (  board_state["top-right"]    == board_state["center-right"]
+      and board_state["center-right"] == board_state["bottom-right"]):
+    return board_state["top-right"].lower()
+  
+  # Diagonal victory
+  elif (  board_state["top-left"]      == board_state["center-center"]
+      and board_state["center-center"] == board_state["bottom-right"]):
+    return board_state["top-left"].lower()
+  elif (  board_state["top-right"]     == board_state["center-center"]
+      and board_state["center-center"] == board_state["bottom-left"]):
+    return board_state["top-right"].lower()
+  
+  else:
+    current_player_turn = ("X" if (current_player_turn == "O") else "O")
+    return None
 
 
 if __name__ == "__main__":
