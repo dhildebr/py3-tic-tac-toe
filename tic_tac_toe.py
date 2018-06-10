@@ -1,6 +1,7 @@
 stdprompt = ">> "
 accepted_responses_yes = ("y", "yes", "yea")
 accepted_responses_no = ("n", "no", "nay")
+accepted_responses_help = ("help", "halp")
 
 # Accepted board position responses - the first corresponds with the key in board_state
 board_aliases_top_left      = ("top-left",                       "top left",                       "tl",     "1")
@@ -21,17 +22,17 @@ player_score_o = 0
 
 # The format string for printing the board.
 board_layout_format_string = (
-    " {sp} | {sp} | {sp} \n"
-    " {tl} | {tc} | {tr} \n"
-    " {sp} | {sp} | {sp} \n"
-    "-{hy}-+-{hy}-+-{hy}-\n"
-    " {sp} | {sp} | {sp} \n"
-    " {cl} | {cc} | {cr} \n"
-    " {sp} | {sp} | {sp} \n"
-    "-{hy}-+-{hy}-+-{hy}-\n"
-    " {bl} | {bc} | {br} \n"
-    " {sp} | {sp} | {sp} \n"
-    " {sp} | {sp} | {sp} "
+    "  {sp}  |  {sp}  |  {sp}  \n"
+    "  {tl}  |  {tc}  |  {tr}  \n"
+    "  {sp}  |  {sp}  |  {sp}  \n"
+    "--{hy}--+--{hy}--+--{hy}--\n"
+    "  {sp}  |  {sp}  |  {sp}  \n"
+    "  {cl}  |  {cc}  |  {cr}  \n"
+    "  {sp}  |  {sp}  |  {sp}  \n"
+    "--{hy}--+--{hy}--+--{hy}--\n"
+    "  {bl}  |  {bc}  |  {br}  \n"
+    "  {sp}  |  {sp}  |  {sp}  \n"
+    "  {sp}  |  {sp}  |  {sp}  "
         .format(
             sp = " ", hy = "-",
             tl = "{tl}", tc = "{tc}", tr = "{tr}",
@@ -40,7 +41,7 @@ board_layout_format_string = (
         )
 )
 
-# A dictionary of the board's current state - each spot is X, O, or a space character
+# A dictionary of the board's current state - each spot is 'X', 'O', or a space character
 board_state = {
   "top-left":     " ", "top-center":     " ", "top-right":     " ",
   "center-left":  " ", "center-center":  " ", "center-right":  " ",
@@ -66,6 +67,90 @@ def parse_yes_no():
     return "n"
   else:
     return None
+
+
+def parse_board_position():
+  """
+  Requests one line of input for the player whose turn it is to input
+  the position of their next piece. They can alternatively type "help"
+  to be given the list of accepted responses. Returns a tuple of the
+  key corresponding to the chosen positon in board_state, and the
+  lowercase letterr indicating the player who took the move.
+  """
+  
+  global stdprompt, accepted_responses_help, \
+         board_aliases_top_left,    board_aliases_top_center,    board_aliases_top_right, \
+         board_aliases_center_left, board_aliases_center_center, board_aliases_center_right, \
+         board_aliases_bottom_left, board_aliases_bottom_center, board_aliases_bottom_right
+  
+  while True:
+    pos_response = input(stdprompt).lower().strip()
+    
+    # Top row
+    if pos_response in board_aliases_top_left:
+      if board_state["top-left"] != " ":
+        print("That position is already filled. Input another.")
+      else:
+        board_state["top-left"] = current_player_turn.upper()
+        return (board_aliases_top_left[0], current_player_turn.lower())
+    elif pos_response in board_aliases_top_center:
+      if board_state["top-center"] != " ":
+        print("That position is already filled. Input another.")
+      else:
+        board_state["top-center"] = current_player_turn.upper()
+        return (board_aliases_top_center[0], current_player_turn.lower())
+    elif pos_response in board_aliases_top_right:
+      if board_state["top-right"] != " ":
+        print("That position is already filled. Input another.")
+      else:
+        board_state["top-right"] = current_player_turn.upper()
+        return (board_aliases_top_right[0], current_player_turn.lower())
+    
+    # Center row
+    elif pos_response in board_aliases_center_left:
+      if board_state["center-left"] != " ":
+        print("That position is already filled. Input another.")
+      else:
+        board_state["center-left"] = current_player_turn.upper()
+        return (board_aliases_center_left[0], current_player_turn.lower())
+    elif pos_response in board_aliases_center_center:
+      if board_state["center-center"] != " ":
+        print("That position is already filled. Input another.")
+      else:
+        board_state["center-center"] = current_player_turn.upper()
+        return (board_aliases_center_center[0], current_player_turn.lower())
+    elif pos_response in board_aliases_center_right:
+      if board_state["center-right"] != " ":
+        print("That position is already filled. Input another.")
+      else:
+        board_state["center-right"] = current_player_turn.upper()
+        return (board_aliases_center_right[0], current_player_turn.lower())
+    
+    # Bottom row
+    elif pos_response in board_aliases_bottom_left:
+      if board_state["bottom-left"] != " ":
+        print("That position is already filled. Input another.")
+      else:
+        board_state["bottom-left"] = current_player_turn.upper()
+        return (board_aliases_bottom_left[0], current_player_turn.lower())
+    elif pos_response in board_aliases_bottom_center:
+      if board_state["bottom-center"] != " ":
+        print("That position is already filled. Input another.")
+      else:
+        board_state["bottom-center"] = current_player_turn.upper()
+        return (board_aliases_bottom_center[0], current_player_turn.lower())
+    elif pos_response in board_aliases_bottom_right:
+      if board_state["bottom-right"] != " ":
+        print("That position is already filled. Input another.")
+      else:
+        board_state["bottom-right"] = current_player_turn.upper()
+        return (board_aliases_bottom_right[0], current_player_turn.lower())
+    
+    # Other responses
+    elif pos_response in accepted_responses_help:
+      pass
+    else:
+      print("Unrecognized responses. Try again, or type \"help\" for help.")
 
 
 def choose_player_names():
@@ -123,9 +208,14 @@ def advance_turn():
   """
   Checks whether either player has won: if so, returns a string of the
   lowercase letter 'x' or 'o' to indicate the victor, otherwise returns
-  None. If no victor is yet declared, toggles the turn to the
-  other player.
+  None. Also toggles the turn to the other player, regardless of whether
+  someone has won. This means that if someone has won, the loser will be
+  first to move should another game be started.
   """
+  
+  global current_player_turn, board_state
+  
+  current_player_turn = ("X" if (current_player_turn == "O") else "O")
   
   # Horizontal victory
   if (    board_state["top-left"]   == board_state["top-center"]
@@ -157,9 +247,16 @@ def advance_turn():
       and board_state["center-center"] == board_state["bottom-left"]):
     return board_state["top-right"].lower()
   
-  else:
-    current_player_turn = ("X" if (current_player_turn == "O") else "O")
-    return None
+  return None
+
+
+def reset_board():
+  """
+  Resets the game board to its blank initial state.
+  """
+  
+  for val in board_state.values():
+    val = " "
 
 
 if __name__ == "__main__":
@@ -168,4 +265,38 @@ if __name__ == "__main__":
   print("{} plays the 'X' piece, {} plays the 'O' piece.".format(
       player_name_x, player_name_o))
   
-  print_board()
+  print("The score is {p1_name} {p1_score} : {p2_score} {p2_name}".format(
+      p1_name = player_name_x, p1_score = player_score_x,
+      p2_name = player_name_o, p2_score = player_score_o))
+  
+  game_continue = True
+  while game_continue:
+    print_board()
+    if current_player_turn == 'X':
+      print("{}, it's your turn. Where do you want to place your 'X'?".format(player_name_x))
+      pos_response = parse_board_position()
+      print_board()
+      
+      winner = advance_turn()
+      if winner == "x":
+        print("{} has won. Play again?".format(player_name_x))
+        yn_response = parse_yes_no()
+        if yn_response == "y":
+          reset_board()
+        else:
+          game_continue = False
+    else:
+      print("{}, it's your turn. Where do you want to place your 'O'?".format(player_name_o))
+      pos_response = parse_board_position()
+      print_board()
+      
+      winner = advance_turn()
+      if winner == "o":
+        print("{} has won. Play again?".format(player_name_x))
+        yn_response = parse_yes_no()
+        if yn_response == "y":
+          reset_board()
+        else:
+          game_continue = False
+  
+  print("Goodbye.")
