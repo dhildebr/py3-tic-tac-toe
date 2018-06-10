@@ -234,9 +234,11 @@ def choose_player_names():
 def advance_turn():
   """
   Checks whether either player has won: if so, returns a string of the
-  lowercase letter 'x' or 'o' to indicate the victor, otherwise returns
-  None. Also toggles the turn to the other player, regardless of whether
-  someone has won. This means that if someone has won, the loser will be
+  lowercase letter 'x' or 'o' to indicate the victor, "tie" if there
+  has been a tie, or an empty string if the game is still afoot.
+  
+  Also toggles the turn to the other player, regardless of whether
+  anyone has won. This means that if someone has won, the loser will be
   first to move should another game be started.
   """
   
@@ -274,7 +276,11 @@ def advance_turn():
       and board_state["center-center"] == board_state["bottom-left"]):
     return board_state["top-right"].lower()
   
-  return None
+  else:
+    for key in board_state:
+      if board_state[key] == " ":
+        return ""
+    return "tie"
 
 
 def reset_game():
@@ -310,12 +316,15 @@ if __name__ == "__main__":
       if winner == "x":
         print("{} has won. Play again?".format(player_name_x))
         player_score_x += 1
-        
-        yn_response = parse_yes_no()
-        if yn_response == "y":
-          reset_game()
-        else:
-          game_continue = False
+      elif winner == "tie":
+        print("It's a tie. Play again?")
+      else:
+        continue
+      
+      if parse_yes_no() == "y":
+        reset_game()
+      else:
+        game_continue = False
     else:
       print("{}, it's your turn. Where do you want to place your 'O'?".format(player_name_o))
       pos_response = parse_board_position()
@@ -325,11 +334,14 @@ if __name__ == "__main__":
       if winner == "o":
         print("{} has won. Play again?".format(player_name_o))
         player_score_o += 1
-        
-        yn_response = parse_yes_no()
-        if yn_response == "y":
-          reset_game()
-        else:
-          game_continue = False
+      elif winner == "tie":
+        print("It's a tie. Play again?")
+      else:
+        continue
+      
+      if parse_yes_no() == "y":
+        reset_game()
+      else:
+        game_continue = False
   
   print("Goodbye.")
