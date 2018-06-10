@@ -2,6 +2,7 @@ stdprompt = ">> "
 accepted_responses_yes = ("y", "yes", "yea")
 accepted_responses_no = ("n", "no", "nay")
 accepted_responses_help = ("help", "halp")
+accepted_responses_quit = ("quit", "exit")
 
 # Accepted board position responses - the first corresponds with the key in board_state
 board_aliases_top_left      = ("top-left",                       "top left",                       "tl",     "1")
@@ -112,9 +113,11 @@ def parse_board_position():
   """
   Requests one line of input for the player whose turn it is to input
   the position of their next piece. They can alternatively type "help"
-  to be given the list of accepted responses. Returns a tuple of the
-  key corresponding to the chosen positon in board_state, and the
-  lowercase letterr indicating the player who took the move.
+  to be given the list of accepted responses, or "quit" to quit the
+  game prematurely. Returns a tuple of the key corresponding to the
+  chosen positon in board_state, and the lowercase letterr indicating
+  the player who took the move. If they typed "quit," the first element
+  of this tuple will instead be the string "quit."
   """
   
   global stdprompt, accepted_responses_help, \
@@ -190,6 +193,8 @@ def parse_board_position():
     # Other responses
     elif pos_response in accepted_responses_help:
       print_help()
+    elif pos_response in accepted_responses_quit:
+      return ("quit", current_player_turn.lower())
     else:
       print("Unrecognized responses. Try again, or type \"help\" for help.")
 
@@ -310,38 +315,44 @@ if __name__ == "__main__":
     if current_player_turn == 'X':
       print("{}, it's your turn. Where do you want to place your 'X'?".format(player_name_x))
       pos_response = parse_board_position()
-      print_board()
-      
-      winner = advance_turn()
-      if winner == "x":
-        print("{} has won. Play again?".format(player_name_x))
-        player_score_x += 1
-      elif winner == "tie":
-        print("It's a tie. Play again?")
-      else:
-        continue
-      
-      if parse_yes_no() == "y":
-        reset_game()
-      else:
+      if pos_response[0] == "quit":
         game_continue = False
+      else:
+        print_board()
+        
+        winner = advance_turn()
+        if winner == "x":
+          print("{} has won. Play again?".format(player_name_x))
+          player_score_x += 1
+        elif winner == "tie":
+          print("It's a tie. Play again?")
+        else:
+          continue
+        
+        if parse_yes_no() == "y":
+          reset_game()
+        else:
+          game_continue = False
     else:
       print("{}, it's your turn. Where do you want to place your 'O'?".format(player_name_o))
       pos_response = parse_board_position()
-      print_board()
-      
-      winner = advance_turn()
-      if winner == "o":
-        print("{} has won. Play again?".format(player_name_o))
-        player_score_o += 1
-      elif winner == "tie":
-        print("It's a tie. Play again?")
-      else:
-        continue
-      
-      if parse_yes_no() == "y":
-        reset_game()
-      else:
+      if pos_response[0] == "quit":
         game_continue = False
+      else:
+        print_board()
+        
+        winner = advance_turn()
+        if winner == "o":
+          print("{} has won. Play again?".format(player_name_o))
+          player_score_o += 1
+        elif winner == "tie":
+          print("It's a tie. Play again?")
+        else:
+          continue
+        
+        if parse_yes_no() == "y":
+          reset_game()
+        else:
+          game_continue = False
   
   print("Goodbye.")
