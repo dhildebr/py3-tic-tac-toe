@@ -15,10 +15,12 @@ board_aliases_bottom_center = ("bottom-center", "bottom-centre", "bottom center"
 board_aliases_bottom_right  = ("bottom-right",                   "bottom right",                   "br",     "9")
 
 player_name_x = ""
-player_name_o = ""
-current_player_turn = "X"
 player_score_x = 0
+
+player_name_o = ""
 player_score_o = 0
+
+current_player_turn = "X"
 
 # The format string for printing the board.
 board_layout_format_string = (
@@ -30,8 +32,8 @@ board_layout_format_string = (
     "  {cl}  |  {cc}  |  {cr}  \n"
     "  {sp}  |  {sp}  |  {sp}  \n"
     "--{hy}--+--{hy}--+--{hy}--\n"
-    "  {bl}  |  {bc}  |  {br}  \n"
     "  {sp}  |  {sp}  |  {sp}  \n"
+    "  {bl}  |  {bc}  |  {br}  \n"
     "  {sp}  |  {sp}  |  {sp}  "
         .format(
             sp = " ", hy = "-",
@@ -197,11 +199,13 @@ def print_board():
   have a space character in the spot.
   """
   
+  print("\n" * 2, end="")
   print(board_layout_format_string.format(
       tl = board_state["top-left"],    tc = board_state["top-center"],    tr = board_state["top-right"],
       cl = board_state["center-left"], cc = board_state["center-center"], cr = board_state["center-right"],
       bl = board_state["bottom-left"], bc = board_state["bottom-center"], br = board_state["bottom-right"]
   ))
+  print("\n" * 2, end="")
 
 
 def advance_turn():
@@ -250,28 +254,31 @@ def advance_turn():
   return None
 
 
-def reset_board():
+def reset_game():
   """
-  Resets the game board to its blank initial state.
+  Resets the game board to its blank initial state, prints the score,
+  and prints a few blank lines to separate the new game from the last.
   """
   
-  for val in board_state.values():
-    val = " "
-
-
-if __name__ == "__main__":
-  print("Welcome message placeholder.")
-  choose_player_names()
-  print("{} plays the 'X' piece, {} plays the 'O' piece.".format(
-      player_name_x, player_name_o))
+  global player_name_x, player_name_o, player_score_x, player_score_o
   
+  for key in board_state:
+    board_state[key] = " "
+  print("\n" * 5)
   print("The score is {p1_name} {p1_score} : {p2_score} {p2_name}".format(
       p1_name = player_name_x, p1_score = player_score_x,
       p2_name = player_name_o, p2_score = player_score_o))
+  print_board()
+
+
+if __name__ == "__main__":
+  print("Welcome to Python Tic-Tac-Toe.")
+  choose_player_names()
   
+  print("\n" * 2)
+  print_board()
   game_continue = True
   while game_continue:
-    print_board()
     if current_player_turn == 'X':
       print("{}, it's your turn. Where do you want to place your 'X'?".format(player_name_x))
       pos_response = parse_board_position()
@@ -280,9 +287,11 @@ if __name__ == "__main__":
       winner = advance_turn()
       if winner == "x":
         print("{} has won. Play again?".format(player_name_x))
+        player_score_x += 1
+        
         yn_response = parse_yes_no()
         if yn_response == "y":
-          reset_board()
+          reset_game()
         else:
           game_continue = False
     else:
@@ -292,10 +301,12 @@ if __name__ == "__main__":
       
       winner = advance_turn()
       if winner == "o":
-        print("{} has won. Play again?".format(player_name_x))
+        print("{} has won. Play again?".format(player_name_o))
+        player_score_o += 1
+        
         yn_response = parse_yes_no()
         if yn_response == "y":
-          reset_board()
+          reset_game()
         else:
           game_continue = False
   
