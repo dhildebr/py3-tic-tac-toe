@@ -51,6 +51,43 @@ board_state = {
 }
 
 
+def print_board():
+  """
+  Prints the current state of the game board. Player pieces are
+  represented as capital letters 'X' or 'O', and empty spots instead
+  have a space character in the spot.
+  """
+  
+  print("\n" * 2, end="")
+  print(board_layout_format_string.format(
+      tl = board_state["top-left"],    tc = board_state["top-center"],    tr = board_state["top-right"],
+      cl = board_state["center-left"], cc = board_state["center-center"], cr = board_state["center-right"],
+      bl = board_state["bottom-left"], bc = board_state["bottom-center"], br = board_state["bottom-right"]
+  ))
+  print("\n" * 2, end = "")
+
+
+def print_help():
+  print("", end = "\n")
+  print("Type \"help\" while playing to print this message again.")
+  print("To specify a board position, type either the cell number or one of a "
+      "set of accepted names. Board cells are numbered 1-9, going left-to-right "
+      "and then top-to-bottom. Thus the top-left cell is #1, and the "
+      "bottom-right is #9.")
+  print("Accepted cell names are as follows:\n\n", end = "")
+  
+  print("Top-left cell names:    ", ", ".join(board_aliases_top_left))
+  print("Top cell names:         ", ", ".join(board_aliases_top_center))
+  print("Top-right cell names:   ", ", ".join(board_aliases_top_right))
+  print("Center-left cell names: ", ", ".join(board_aliases_center_left))
+  print("Center cell names:      ", ", ".join(board_aliases_center_center))
+  print("Center-right cell names:", ", ".join(board_aliases_center_right))
+  print("Bottom-left cell names: ", ", ".join(board_aliases_bottom_left))
+  print("Bottom cell names:      ", ", ".join(board_aliases_bottom_center))
+  print("Bottom-right cell names:", ", ".join(board_aliases_bottom_right))
+  print("", end = "\n", flush = True)
+
+
 def parse_yes_no():
   """
   Requests one line of input and returns the string "y" if it qualifies
@@ -87,9 +124,11 @@ def parse_board_position():
   
   while True:
     pos_response = input(stdprompt).lower().strip()
+    if len(pos_response) <= 0:
+      continue
     
     # Top row
-    if pos_response in board_aliases_top_left:
+    elif pos_response in board_aliases_top_left:
       if board_state["top-left"] != " ":
         print("That position is already filled. Input another.")
       else:
@@ -150,7 +189,7 @@ def parse_board_position():
     
     # Other responses
     elif pos_response in accepted_responses_help:
-      pass
+      print_help()
     else:
       print("Unrecognized responses. Try again, or type \"help\" for help.")
 
@@ -190,22 +229,6 @@ def choose_player_names():
       player_name_o = name_input
     else:
       print("Please re-type your name.")
-
-
-def print_board():
-  """
-  Prints the current state of the game board. Player pieces are
-  represented as capital letters 'X' or 'O', and empty spots instead
-  have a space character in the spot.
-  """
-  
-  print("\n" * 2, end="")
-  print(board_layout_format_string.format(
-      tl = board_state["top-left"],    tc = board_state["top-center"],    tr = board_state["top-right"],
-      cl = board_state["center-left"], cc = board_state["center-center"], cr = board_state["center-right"],
-      bl = board_state["bottom-left"], bc = board_state["bottom-center"], br = board_state["bottom-right"]
-  ))
-  print("\n" * 2, end="")
 
 
 def advance_turn():
@@ -275,7 +298,6 @@ if __name__ == "__main__":
   print("Welcome to Python Tic-Tac-Toe.")
   choose_player_names()
   
-  print("\n" * 2)
   print_board()
   game_continue = True
   while game_continue:
